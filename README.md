@@ -53,3 +53,12 @@ These are planned for future phases.
 3. Pick a mode from `_template/modes/`
 4. Pick an output template from `_template/outputs/`
 5. Assemble all three into a single prompt and paste into your LLM
+
+
+## Future Work
+
+- Persona library (DevOps Mentor, Learning Coach, PM Assistant, ...)
+- Additional modes: `project_planning.md`, `assisting.md`
+- Build tooling: script that assembles persona + mode + output-template into a single prompt
+- Eval integration (Promptfoo or similar)
+- Multi-language support (`language` field in use)

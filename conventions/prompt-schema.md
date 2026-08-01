@@ -25,7 +25,7 @@ the following YAML front matter block at the top.
 | Field      | Type   | Required   | Description                                                                         |
 | ---------- | ------ | ---------- | ----------------------------------------------------------------------------------- |
 | `name`     | string | yes        | Unique identifier of the file (kebab-case)                                          |
-| `type`     | string | yes        | One of: `persona`, `skill`, `mode`, `output-template`, `shared-block`, `convention` |
+| `type`     | string | yes        | One of: `persona`, `skill`, `output-template`, `shared-block`, `convention` |
 | `version`  | string | yes        | Semantic version string, e.g. `"1.0"`                                               |
 | `language` | string | yes        | ISO 639-1 code, e.g. `en`, `hu`                                                     |
 | `status`   | string | yes        | One of: `draft`, `stable`, `deprecated`                                             |
@@ -51,34 +51,35 @@ tags: [devops, mentoring, tutorial]
 
 ## Type-Specific Schemas
 
+### `convention`
+
+Defines the documentation rules for creating and maintaining a framework component type.
+
+| Heading                    | Required | Notes                                                            |
+| -------------------------- | -------- | ---------------------------------------------------------------- |
+| `# [Component] Convention` | yes      | Names the component type governed by the document.               |
+| `## Definition`            | yes      | Defines the component's purpose in one concise statement.        |
+| `## Scope`                 | yes      | States what belongs in the component and what does not.          |
+| `## Required Front Matter` | optional | Use when the component has file-level front matter requirements. |
+| `## Required Sections`     | optional | Use when the component has mandatory Markdown sections.          |
+| `## Optional Sections`     | optional | Use when the component supports documented optional sections.    |
+| `## Example`               | optional | A minimal representative component example.                      |
+| `## Authoring Checklist`   | optional | Verification criteria for authors before adding a component.     |
+
 ### `persona`
 
 Defines the identity, tone, and expertise of an AI agent.
 
-| Heading            | Required | Notes                                            |
-| ------------------ | -------- | ------------------------------------------------ |
-| `# Role`           | yes      | One-paragraph description of who this is         |
-| `# Scope`          | yes      | What topics/tasks this persona covers            |
-| `# Working Style`  | yes      | Tone, format preferences, level of detail        |
-| `# Rules`          | yes      | Hard constraints (what to avoid, how to behave)  |
-| `# Goal`           | yes      | What the persona ultimately helps achieve        |
-| `# Example Prompt` | optional | A short sample prompt showing the persona in use |
-
-
----
-
-
-### `mode`
-
-A behavioural overlay applied on top of a persona for a specific task type.
-
-| Heading          | Required | Notes                                                             |
-| ---------------- | -------- | ----------------------------------------------------------------- |
-| `# Purpose`      | yes      | What this mode is for                                             |
-| `# applies_to`   | yes      | Which persona(s) this mode is designed for (use `any` if general) |
-| `# Behaviour`    | yes      | How the LLM should act in this mode                               |
-| `# Output Hints` | yes      | Preferred format, length, structure                               |
-| `# Constraints`  | optional | What this mode explicitly avoids                                  |
+| Heading            | Required | Notes                                                                                         |
+| ------------------ | -------- | --------------------------------------------------------------------------------------------- |
+| `# Role`           | yes      | One-paragraph description of who this is                                                      |
+| `# Scope`          | yes      | What topics/tasks this persona covers                                                         |
+| `# Working Style`  | yes      | Tone, format preferences, level of detail                                                     |
+| `# Rules`          | yes      | Hard constraints (what to avoid, how to behave)                                               |
+| `# Goal`           | yes      | What the persona ultimately helps achieve                                                     |
+| `# Expertise`      | optional | Specific knowledge areas, methods, or professional standards that sharpen the persona's scope |
+| `# Exclusions`     | optional | Explicit responsibility boundaries, unsupported areas, or roles the persona must not assume   |
+| `# Example Prompt` | optional | A short sample prompt showing the persona in use                                              |
 
 
 ---

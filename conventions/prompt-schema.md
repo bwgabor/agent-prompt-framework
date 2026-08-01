@@ -31,6 +31,8 @@ the following YAML front matter block at the top.
 | `status`   | string | yes        | One of: `draft`, `stable`, `deprecated`                                             |
 | `tags`     | list   | optional   | Free-form keywords for filtering/searching                                          |
 
+Some types require additional front matter fields beyond the shared set. These are documented in the type's own schema section below (see `output-template`).
+
 
 **Example:**
 
@@ -66,6 +68,10 @@ Defines the documentation rules for creating and maintaining a framework compone
 | `## Example`               | optional | A minimal representative component example.                      |
 | `## Authoring Checklist`   | optional | Verification criteria for authors before adding a component.     |
 
+
+---
+
+
 ### `persona`
 
 Defines the identity, tone, and expertise of an AI agent.
@@ -87,14 +93,25 @@ Defines the identity, tone, and expertise of an AI agent.
 
 ### `output-template`
 
-A reusable template that defines the structure of a specific output artifact.
+A presentation-layer template that defines how one specific artifact type should be structured and formatted, independent of the content or process that produces it.
 
-| Heading         | Required | Notes                                                      |
-| --------------- | -------- | ---------------------------------------------------------- |
-| `# Purpose`     | yes      | What artifact this template produces                       |
-| `# format`      | yes      | One of: `markdown`, `json`, `text`                         |
-| `# Structure`   | yes      | The actual template body (use placeholders like `{topic}`) |
-| `# Usage Notes` | optional | When to use this template and when not to                  |
+**Additional required front matter fields:**
+
+| Field        | Type   | Required | Description                                                                     |
+| ------------ | ------ | -------- | ------------------------------------------------------------------------------- |
+| `format`     | string | yes      | Syntax the artifact is written in: `markdown \| yaml \| json \| plain \| shell` |
+| `strictness` | string | yes      | How rigid the shape is: `light \| structured \| strict`                         |
+
+| Heading               | Required | Notes                                                                |
+| --------------------- | -------- | -------------------------------------------------------------------- |
+| `# Purpose`           | yes      | What kind of result this template shapes                             |
+| `# Use When`          | yes      | The condition or context that triggers this template                 |
+| `# Rules`             | yes      | Content-level or structural rules, independent of format             |
+| `# Formatting Rules`  | yes      | Concrete formatting requirements: layout, ordering, markup, headers  |
+| `# Required Sections` | optional | Human readable outputs only; mandatory headers or blocks, with notes |
+| `# Compatibility`     | optional | Known combinations with skills or personas                           |
+
+Front matter for this type also requires `format` (`markdown \| yaml \| json \| plain \| shell`) and `strictness` (`light \| structured \| strict`), in addition to the shared fields.
 
 
 ---

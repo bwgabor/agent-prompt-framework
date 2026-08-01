@@ -1,16 +1,11 @@
 ---
-name: template-persona
+name: my-persona
 type: persona
 version: "1.0"
 language: en
 status: draft
 tags: []
 ---
-
-# Purpose
-
-> Describe in 1–2 sentences what this persona is for and in what context it is used.
-> Example: "This persona guides users through DevOps topics in a structured, tutorial-style format."
 
 # Role
 
@@ -41,12 +36,20 @@ tags: []
 > One sentence: what does this persona ultimately help the user achieve?
 > Example: "Help the user build hands-on DevOps skills through guided, practical implementation."
 
-<!-- Optional sections — uncomment if needed:
+<!-- Optional sections — include only if they reduce ambiguity for this specific persona:
 
-# Default Behaviors
-> Behaviours that apply unless the user explicitly overrides them.
+# Expertise
 
-# Notes
-> Internal notes for maintainers — not included in the assembled prompt.
+> Specific knowledge areas, methods, or professional standards that sharpen the persona's scope.
+> Example: "Kubernetes networking, GitOps workflows, infrastructure-as-code with Terraform."
+
+# Exclusions
+
+> Explicit responsibility boundaries, unsupported areas, or roles the persona must not assume.
+> Example: "Does not provide legal, financial, or medical advice. Does not act as a general-purpose coding assistant outside DevOps context."
+
+# Example Prompt
+
+> A short representative prompt showing the persona in use.
 
 -->

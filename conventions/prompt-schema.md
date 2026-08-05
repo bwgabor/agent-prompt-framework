@@ -25,7 +25,7 @@ the following YAML front matter block at the top.
 | Field      | Type   | Required   | Description                                                                         |
 | ---------- | ------ | ---------- | ----------------------------------------------------------------------------------- |
 | `name`     | string | yes        | Unique identifier of the file (kebab-case)                                          |
-| `type`     | string | yes        | One of: `persona`, `skill`, `output-template`, `shared-block`, `convention` |
+| `type`     | string | yes        | One of: `persona`, `skill`, `output-template`, `shared-block`, `agent`, `convention` |
 | `version`  | string | yes        | Semantic version string, e.g. `"1.0"`                                               |
 | `language` | string | yes        | ISO 639-1 code, e.g. `en`, `hu`                                                     |
 | `status`   | string | yes        | One of: `draft`, `stable`, `deprecated`                                             |
@@ -147,3 +147,35 @@ A self-contained, reusable capability or repeatable process.
 | `# Examples`        | optional | Short, representative examples of using the skill                              |
 | `# References`      | optional | External sources or related files in this repository                           |
 | `# Compatibility`   | optional | Known combinations with personas, outputs, shared blocks, or future components |
+
+
+---
+
+
+### `agent`
+
+A declarative composition manifest that assembles a persona with one or more skills - and optionally context, output templates, and shared blocks - without duplicating the content of the referenced components.
+
+**Additional required front matter fields:**
+
+| Field     | Type   | Required | Description                                             |
+| --------- | ------ | -------- | ------------------------------------------------------- |
+| `persona` | string | yes      | Name of exactly one `persona` component this agent uses |
+| `skills`  | list   | yes      | Names of one or more `skill` components this agent uses |
+
+**Additional optional front matter fields:**
+
+| Field           | Type | Description                                                         |
+| --------------- | ---- | ------------------------------------------------------------------- |
+| `context`       | list | Names of `context` components. Reserved for V2; empty/absent in V1. |
+| `outputs`       | list | Names of `output-template` components                               |
+| `shared-blocks` | list | Names of `shared-block` components                                  |
+
+| Heading           | Required | Notes                                                                      |
+| ----------------- | -------- | -------------------------------------------------------------------------- |
+| `# Purpose`       | yes      | What this specific combination of components is for                        |
+| `# Composition`   | yes      | The referenced components in assembly order, with a one-line role for each |
+| `# Notes`         | optional | Maintainer notes, e.g. why specific components were chosen                 |
+| `# Compatibility` | optional | Known substitutions or variations that also work with this agent           |
+
+Composition order: `persona + [context?] + skills + [outputs?]`. Referenced `shared-blocks` are inserted per their own `# Usage` instructions, typically after the skill(s) and before the user's request.

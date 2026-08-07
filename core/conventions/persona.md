@@ -1,97 +1,49 @@
 ---
 name: persona
 type: convention
-version: "1.0"
+version: "2.0"
 language: en
 status: draft
-tags: [personas, schema, conventions]
+tags: [personas, conventions]
 ---
 
 # Persona Convention
 
-This document defines how to create and maintain `persona` components in the Agent Prompt Framework.
+This document explains what a `persona` component is for and how to think about writing one. It does not enumerate the required front matter fields or Markdown sections - those are defined by the machine-readable schema at `core/schemas/persona.yaml` (see below).
 
-## Definition
+## What is it?
 
-A persona defines the persistent identity of an agent: its role, expertise scope, voice, and behavioural principles. It does not define processes, workflows, or output presentation.
+A persona defines the persistent identity of an agent: its role, expertise scope, voice, and behavioural principles. It is the "who" - not the "how" (that's a `skill`) and not the "how it's presented" (that's an `output-template`).
 
-## Scope
+## When to use it?
 
-### What belongs in a persona
+Create or edit a persona when you need to define a stable identity that an agent should keep across many different tasks and sessions - for example a mentor, a reviewer, or a domain expert. If what you actually want to change is *how a task gets done*, not *who is doing it*, you probably want a `skill` instead.
 
-A persona defines the stable characteristics that shape how an agent operates. It may specify:
+A persona should stay broad enough to be reused. If you find yourself writing task-specific instructions into a persona, that's a signal the content belongs in a `skill`, not here.
 
-- The agent's role and intended contribution
-- Its expertise scope and professional perspective
-- Its working style, tone, and level of detail
-- Behavioural rules and durable boundaries
-- The long-term goal it helps the user achieve
+## Anti-patterns
 
-### What does not belong in a persona
+- **Baking a process into the persona.** A numbered workflow, a decision procedure, or "first do X, then do Y" belongs in a `skill`. If a persona file contains ordered steps, that's a sign it's really trying to be a skill.
+- **Prescribing output format.** Instructions like "always respond with a table" or "wrap output in a code block" belong in an `output-template`. A persona can describe *tone and level of detail*, but not layout.
+- **Hardcoding project- or domain-specific background.** "You work at Acme Corp on the billing system" is context, not identity. Keep the persona reusable; domain narrowing is reserved for the future `context` component.
+- **Turning the persona into a temporary behavioural overlay.** A short-lived mode switch ("today, focus only on security review") is not a persona; it changes behaviour for a session, not identity.
+- **Merging multiple components into one file.** A persona that also defines the agent's skills and output shape is really an `agent` composition. Keep the persona focused on identity alone.
 
-A persona must not define:
+## Related schema
 
-- A reusable process, ordered workflow, or decision procedure; use a `skill`
-- Presentation format, response layout, or artifact structure; use an `output-template`
-- User-, project-, or domain-specific background; reserve this for a future `context` component
-- A temporary task-specific behavioural overlay; use a `mode`
-- The composition of multiple components into a complete prompt; use an `agent`
-
-## Required Front Matter
-
-Every persona file must use the shared front matter schema and set:
-
-```yaml
-type: persona
-```
-
-The following shared fields are required:
-
-- `name`
-- `type`
-- `version`
-- `language`
-- `status`
-
-The `tags` field is optional.
-
-## Required Sections
-
-Every persona file must contain the following Markdown sections:
-
-| Section           | Purpose                                                                                 |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| `# Role`          | Defines who the agent is and the role it takes.                                         |
-| `# Scope`         | Defines the topics, tasks, and responsibility area the persona covers.                  |
-| `# Working Style` | Defines the persona's tone, communication preferences, and appropriate level of detail. |
-| `# Rules`         | Defines durable behavioural constraints and principles.                                 |
-| `# Goal`          | Defines the long-term outcome the persona helps the user achieve.                       |
-
-## Optional Sections
-
-A persona file may include the following sections when they add useful guidance:
-
-| Section            | Use it for                                                                                     |
-| ------------------ | ---------------------------------------------------------------------------------------------- |
-| `# Expertise`      | Specific knowledge areas, methods, or professional standards that sharpen the persona's scope. |
-| `# Exclusions`     | Explicit responsibility boundaries, unsupported areas, or roles the persona must not assume.   |
-| `# Example Prompt` | A short representative prompt showing the persona in use.                                      |
-
-Do not add optional sections merely for completeness. Include them only when they reduce ambiguity or make the persona safer or easier to apply.
+The exact required and optional front matter fields, and the required Markdown sections a persona file must contain, are defined in `core/schemas/persona.yaml`. Validate new persona files against that schema rather than relying on this document for structural rules.
 
 ## Example
 
-The following example shows the minimum structure of a persona:
-
 ```md
-***
+---
 name: devops-mentor
 type: persona
 version: "1.0"
 language: en
 status: draft
 tags: [devops, mentoring]
-***
+---
 
 # Role
 
@@ -115,15 +67,3 @@ Explain concepts clearly and pragmatically. Use concrete examples, state assumpt
 
 Help the user build sustainable DevOps knowledge and make sound operational decisions.
 ```
-
-## Authoring Checklist
-
-Before adding a persona, verify that:
-
-- [ ] The file defines a persistent identity rather than a task-specific workflow.
-- [ ] The persona has a clear role, scope, working style, rules, and goal.
-- [ ] The persona does not prescribe output layout or presentation format.
-- [ ] The persona does not contain a reusable process or ordered execution steps.
-- [ ] The front matter uses `type: persona`.
-- [ ] Optional sections reduce ambiguity rather than add filler.
-- [ ] The persona can be combined with relevant skills, modes, contexts, and output templates without duplicating their responsibilities.

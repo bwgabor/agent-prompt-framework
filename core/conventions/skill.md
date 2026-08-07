@@ -1,96 +1,49 @@
 ---
 name: skill
 type: convention
-version: "1.0"
+version: "2.0"
 language: en
 status: draft
-tags: [skills, schema, conventions]
+tags: [skills, conventions]
 ---
 
 # Skill Convention
 
-This document defines how to create and maintain `skill` components in the Agent Prompt Framework.
+This document explains what a `skill` component is for and how to think about writing one. It does not enumerate the required front matter fields or Markdown sections - those are defined by the machine-readable schema at `core/schemas/skill.yaml` (see below).
 
-## Definition
+## What is it?
 
-A skill is a self-contained, reusable capability or repeatable process that defines the required inputs, execution process, and expected content-level result.
+A skill is a self-contained, reusable capability or repeatable process. It defines the required inputs, the execution process, and the expected content-level result. It is the "how" - not the "who" (that's a `persona`) and not the "how it's presented" (that's an `output-template`).
 
-## Scope
+## When to use it?
 
-### What belongs in a skill
+Create or edit a skill when you want to capture a process that should be run the same way every time it's invoked, regardless of which persona invokes it - for example, a brainstorming session, a code review pass, or a project-planning workflow. If what varies between sessions is *who is speaking*, not *what gets done*, that belongs in a `persona`, not here.
 
-A skill defines a reusable capability or repeatable process. It may specify:
+A skill should be usable by more than one persona. If a process only makes sense bolted to one specific identity, consider whether it should really just live inline in that persona instead of being split out.
 
-- Required inputs and their role in the process
-- Ordered steps or an adaptable workflow
-- Decision criteria and process-specific constraints
-- The expected content-level result
+## Anti-patterns
 
-### What does not belong in a skill
+- **Defining identity or tone inside a skill.** "You are a senior engineer who..." belongs in a `persona`. A skill describes a process, not who is carrying it out.
+- **Prescribing the final presentation format.** A skill should describe the content-level result ("a prioritized list of ideas"), not its exact Markdown layout. Layout belongs in an `output-template`.
+- **Hardcoding project- or domain-specific facts** into the process steps. If the skill only works for one specific project, it's not reusable - reserve domain narrowing for the future `context` component.
+- **Writing a single short instruction as a full skill.** A one- or two-line reusable instruction fragment (e.g. "ask a clarifying question before answering") is a `shared-block`, not a skill. Skills are for multi-step or non-trivial processes.
+- **Skipping the inputs.** A process that doesn't state what it needs to start from is hard to reuse correctly - always be explicit about required inputs, even if they seem obvious.
 
-A skill must not define:
+## Related schema
 
-- Agent identity, expertise, tone, or voice; use a `persona`
-- User-, project-, or domain-specific background; reserve this for a future `context` component
-- Presentation format or response layout; use an `output-template`
-- A short standalone instruction fragment; use a `shared-block`
-
-## Required Front Matter
-
-Every skill file must use the shared front matter schema and set:
-
-```yaml
-type: skill
-```
-
-The following shared fields are required:
-
-- `name`
-- `type`
-- `version`
-- `language`
-- `status`
-
-The `tags` field is optional.
-
-## Required Sections
-
-Every skill file must contain the following Markdown sections:
-
-| Section | Purpose |
-| --- | --- |
-| `# Purpose` | States the capability or process the skill provides. |
-| `# When to Use` | Defines the situations in which the skill is applicable. |
-| `# Inputs` | Describes the information required to run the process. |
-| `# Process` | Defines ordered steps or an adaptable workflow. |
-| `# Expected Output` | Describes the expected content-level result, without prescribing its presentation format.
-
-## Optional Sections
-
-A skill file may include the following sections when they add useful guidance:
-
-| Section | Use it for |
-| --- | --- |
-| `# Constraints` | Process-specific limits, exclusions, and guardrails. |
-| `# Examples` | Short, representative examples of using the skill. |
-| `# References` | External sources or related files in this repository. |
-| `# Compatibility` | Known combinations with personas, outputs, shared blocks, or future components. |
-
-Do not add optional sections merely for completeness. Include them only when they reduce ambiguity or make the skill safer or easier to apply.
+The exact required and optional front matter fields, and the required Markdown sections a skill file must contain, are defined in `core/schemas/skill.yaml`. Validate new skill files against that schema rather than relying on this document for structural rules.
 
 ## Example
 
-The following example shows the minimum structure of a process-type skill:
-
-```markdown
-***
+```md
+---
 name: brainstorming-session
 type: skill
 version: "1.0"
 language: en
 status: draft
 tags: [ideation, process]
-***
+---
 
 # Purpose
 
@@ -117,15 +70,3 @@ Use when the user needs to explore options before selecting an idea or starting 
 
 A prioritized set of viable ideas, each with a short rationale and enough detail to select or develop further.
 ```
-
-## Authoring Checklist
-
-Before adding a skill, verify that:
-
-- [ ] The file describes a reusable capability or repeatable process.
-- [ ] The skill does not define persona identity, context, or presentation rules.
-- [ ] The front matter uses `type: skill`.
-- [ ] All required sections are present.
-- [ ] Optional sections add useful guidance rather than filler.
-- [ ] The process is specific enough to apply and flexible enough for relevant variations.
-- [ ] The expected output describes content-level results rather than Markdown or layout requirements.

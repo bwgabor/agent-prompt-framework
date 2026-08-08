@@ -1,64 +1,81 @@
 # agent-prompt-framework
 
-A Markdown-first framework for structuring AI agent personas, modes, output templates,
-and shared instruction blocks — with a consistent YAML front matter schema.
-
-Designed for manual use: copy a template, fill in your persona, combine with a mode
-and output template, then paste the assembled prompt into any LLM.
+A Markdown-first framework for structuring AI agent personas, skills, shared instruction blocks, and output templates - with a platform-configuration system on top. Each LLM platform (Claude, ChatGPT, ...) declares in a `blueprint.yaml` which shared components it uses and which ones it overrides, so the same underlying content can be assembled differently per platform without duplicating it.
 
 ---
-
 
 ## Repository structure
 
-```text
+```bash
 agent-prompt-framework/
 ├── README.md
-├── conventions/
-│ ├── prompt-schema.md # Common front matter + type-specific schemas
-│ └── output-strategy.md # Template vs. output rules, file naming
-├── _template/
-│ ├── persona.md
-│ ├── modes/
-│ │ ├── ideation.md
-│ │ ├── project_planning.md
-│ │ └── assisting.md
-│ └── outputs/
-│ └── idea-list.md
-├── personas/ # Real personas go here (empty in V1)
-├── shared/
-│ └── blocks/
-│ └── questioning.md # Reusable instruction blocks
-└── outputs/ # Session artifacts go here (empty in V1)
+├── ARCHITECTURE.md          # Key design decisions, in short form
+├── blueprint.schema.json    # JSON Schema for platforms/*/blueprint.yaml
+├── core/                    # Shared components, defined once
+│   ├── personas/
+│   ├── skills/
+│   ├── shared-blocks/
+│   ├── outputs/
+│   ├── conventions/         # Why/how docs for each component type
+│   └── schemas/             # Machine-readable schema per component type
+├── platforms/                # One folder per platform
+│   ├── claude/
+│   │   ├── blueprint.yaml    # What Claude uses from core/, and overrides
+│   │   ├── README.md
+│   │   └── skills/           # Claude-specific overrides, if any
+│   ├── chatgpt/
+│   ├── gemini/
+│   ├── perplexity/
+│   └── ...
+├── templates/                 # Starter files to copy from
+│   ├── blueprint.yaml.template
+│   ├── persona.md
+│   ├── skill.md
+│   └── output.md
+└── tests/                     # Generated example outputs, used to validate the framework
 ```
 
----
+- **`core/`** holds every component that isn't platform-specific. Written once, reused everywhere.
+- **`platforms/`** holds only what's different per platform: the `blueprint.yaml` and any override files.
+- **`templates/`** holds blank starting points - copy from here when creating something new, don't edit in place.
 
+## The blueprint system
 
-## What's NOT in V1
+Each platform has exactly one `platforms/<platform>/blueprint.yaml`. It lists, under `components`, which persona(s), skills, shared-blocks and output-templates that platform uses - by component `name`, not by file path.
 
-- No real personas (only the `_template` starter files)
-- No build tooling, CLI, or automation scripts
-- No eval or registry integration
+**Source resolution (override logic):** for each component listed in a blueprint, the actual content comes from `platforms/<platform>/<type>/<name>.md` if that file exists, otherwise from `core/<type>/<name>.md`. This means adding a platform-specific version of a component never requires touching the blueprint - just add the file at the matching path and it takes over automatically.
 
-These are planned for future phases.
+**Output assembly:** by default every component gets its own output file. If a platform's prompt slots don't line up 1:1 with components (e.g. no separate skill slot, or the same content needs to land in two files), the blueprint's optional `outputs` section maps target file names to lists of `type:name` references. See `ARCHITECTURE.md` ("Output assembly") for the full rules - in short, `outputs` only ever contains references, never literal prompt text.
 
----
+Every `blueprint.yaml` validates against `blueprint.schema.json`.
 
+## Adding a new platform
 
-## How to use (preview)
+1. Create `platforms/<platform>/`.
+2. Copy `templates/blueprint.yaml.template` to `platforms/<platform>/blueprint.yaml` and fill it in - list the components the platform should use.
+3. If the platform needs a component to behave differently than the core version, add a file at `platforms/<platform>/<type>/<name>.md` with the same `name`; it overrides the core version automatically.
+4. If the platform's actual config/prompt slots don't match one-file-per-component, add an `outputs` section mapping target files to component references.
+5. Validate the blueprint against `blueprint.schema.json`, and confirm every referenced component exists in `core/` or is overridden locally.
+6. Add a short `platforms/<platform>/README.md` describing what's platform-specific and why (see `platforms/claude/README.md` for the reference example).
 
-1. Copy `_template/persona.md` → `personas/your-persona.md`
-2. Fill in the front matter and persona body
-3. Pick a mode from `_template/modes/`
-4. Pick an output template from `_template/outputs/`
-5. Assemble all three into a single prompt and paste into your LLM
+## Adding a new component
 
+1. Pick the component type: `persona`, `skill`, `shared-block`, or `output-template`.
+2. Read the matching convention doc in `core/conventions/` for what the component is for and common anti-patterns.
+3. Copy the matching template from `templates/` and fill it in, following the required/optional fields and sections defined in `core/schemas/<type>.yaml`.
+4. Save it under `core/<type>/<name>.md` if it's shared, or `platforms/<platform>/<type>/<name>.md` if it's an override for one platform only.
+5. Add the component's `name` to the relevant blueprint(s) under `components`.
 
-## Future Work
+## Reference material
 
-- Persona library (DevOps Mentor, Learning Coach, PM Assistant, ...)
-- Additional modes: `project_planning.md`, `assisting.md`
-- Build tooling: script that assembles persona + mode + output-template into a single prompt
-- Eval integration (Promptfoo or similar)
-- Multi-language support (`language` field in use)
+- `ARCHITECTURE.md` - the design decisions behind `core/` + `platforms/` and the blueprint system.
+- `core/conventions/` - what each component type is for, and anti-patterns to avoid.
+- `core/schemas/` and `blueprint.schema.json` - the machine-readable field/section requirements.
+- `platforms/claude/` - the reference platform configuration; a working example to model new platforms on.
+
+## What's NOT in this version
+
+- ChatGPT, Perplexity, Gemini, Copilot, Grok, Manus platform configurations (folders exist as placeholders; content comes in a later round)
+- A build/assembly tool that turns a blueprint into finished prompt files (currently manual)
+- Automated validation or a CI pipeline
+- A large persona/skill example catalog

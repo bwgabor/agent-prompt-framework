@@ -1,0 +1,82 @@
+# templates/blueprint.yaml.template
+#
+# Copy this file to platforms/<platform>/blueprint.yaml and fill it in.
+# Validates against /blueprint.schema.json (JSON Schema draft-07).
+# See ARCHITECTURE.md ("Override logic", "Output assembly") for the full
+# resolution rules this file relies on.
+
+# Platform identifier. Must exactly match the platforms/<platform>/ folder name.
+# Example: claude, chatgpt, gemini, perplexity
+platform: my-platform
+
+# Version of THIS blueprint file (not the platform's own version), as a quoted string.
+# Bump when you add/remove components or change the outputs mapping.
+version: "1.0"
+
+# --- components ------------------------------------------------------------
+# WHAT this platform uses. Each entry is a component's `name` front-matter
+# value (see core/conventions/*.md), NOT a file path.
+#
+# Default resolution (when a component is NOT mentioned in `outputs` below):
+# it gets its own file, using
+#   platforms/<platform>/<type>/<name>.md   if it exists (override),
+#   core/<type>/<name>.md                   otherwise (shared default).
+components:
+  personas:
+    - my-persona          # exactly one persona is expected per agent using this blueprint
+
+  skills:
+    - my-skill             # at least one skill; list as many as needed
+
+  shared-blocks: []        # optional — leave as [] if unused
+
+  output-templates: []     # optional — leave as [] if unused
+
+# --- outputs (optional) -----------------------------------------------------
+# WHERE components go, only needed when the platform's slots don't match the
+# default "one file per component" layout — e.g. no separate skill slot, or
+# the same component needs to be merged into more than one artifact file.
+#
+# Keys: arbitrary target artifact names, e.g. general-instructions, skills,
+#       my-project-instructions — whatever the platform actually accepts.
+# Values: list of "type:name" references. `type` is one of
+#       personas | skills | shared-blocks | output-templates
+#       and `name` must already be listed under that type in `components` above.
+#
+# Rules:
+# - A component referenced here is merged into every output file it's listed
+#   under, INSTEAD of getting its own default file.
+# - The same "type:name" reference may appear under more than one key on
+#   purpose (e.g. the same skill copied into two project-instruction files) —
+#   this is allowed repetition, not an error.
+# - Any component NOT mentioned anywhere in `outputs` keeps the default
+#   behavior described above (its own file).
+# - Never put literal prompt text here — only references. Content always
+#   lives in core/ or platforms/<platform>/, not in the blueprint.
+#
+# Leave this section out entirely if the platform just needs the default
+# one-file-per-component layout.
+outputs:
+  general-instructions:
+    - personas:my-persona
+    - shared-blocks:my-shared-block
+
+# --- Example (delete before committing) -------------------------------------
+# platform: claude
+# version: "1.0"
+# components:
+#   personas:
+#     - career-coach
+#   skills:
+#     - brainstorming
+#     - ideation
+#   shared-blocks:
+#     - questioning
+#   output-templates:
+#     - idea-list
+# outputs:
+#   general-instructions:
+#     - personas:career-coach
+#     - shared-blocks:questioning
+#   # brainstorming and ideation are NOT listed here, so each gets its own
+#   # default skill file (brainstorming.md, ideation.md).

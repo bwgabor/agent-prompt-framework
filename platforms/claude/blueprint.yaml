@@ -1,0 +1,28 @@
+# platforms/claude/blueprint.yaml
+# Reference implementation — see ARCHITECTURE.md and blueprint.schema.json.
+
+platform: claude
+version: "1.0"
+
+components:
+  personas:
+    - career-coach
+    - persona-architect
+
+  skills:
+    - brainstorming-session
+    - ideation
+    - framework-builder   # overridden for Claude — see platforms/claude/skills/framework-builder.md
+
+  shared-blocks:
+    - concise-structured-response
+    - questioning
+
+  output-templates:
+    - idea-list
+    - persona-sheet
+    - project-datasheet
+
+# No `outputs` section: Claude natively supports one file per component
+# (a persona -> project instructions, each skill -> its own Skill file),
+# so the default one-file-per-component layout is used as-is.

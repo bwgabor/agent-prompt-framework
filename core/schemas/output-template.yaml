@@ -1,0 +1,81 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://raw.githubusercontent.com/bwgabor/agent-prompt-framework/main/core/schemas/output-template.yaml"
+title: Output Template
+description: >
+  Front matter schema for an `output-template` component (templates/*.md and
+  its generated instances). An output template shapes how a content-level
+  result is presented, without prescribing the content or process that
+  produces it. See core/conventions/output.md.
+type: object
+properties:
+  name:
+    type: string
+    description: Unique identifier for this output template, used to reference it from a blueprint.yaml.
+  type:
+    const: output-template
+    description: Component type discriminator. Must always be "output-template".
+  version:
+    type: string
+    pattern: "^\\d+\\.\\d+$"
+    description: Semantic version of this output template file, as a quoted string (e.g. "1.0").
+  language:
+    type: string
+    description: "Language the output template's prompt content is written in (e.g. en, hu)."
+  status:
+    enum: [draft, stable, deprecated]
+    description: Lifecycle status of this component.
+  format:
+    type: string
+    description: >
+      Content format the produced artifact is written in (e.g. markdown).
+  strictness:
+    enum: [strict, structured]
+    description: >
+      How rigidly instances of this template must follow the Formatting
+      Rules. "strict" allows no deviation; "structured" allows minor
+      flexibility as long as the required sections and their order are kept.
+  tags:
+    type: array
+    items:
+      type: string
+    description: Free-form labels for search/filtering. Use [] if none apply.
+required: [name, type, version, language, status, format, strictness]
+additionalProperties: false
+x-sections:
+  - name: Purpose
+    required: true
+    description: >
+      State what kind of artifact this output template shapes. Keep it
+      focused on presentation structure, not on reasoning or persona
+      behaviour.
+  - name: Use When
+    required: true
+    description: >
+      Describe when this output template should be applied. Focus on the
+      situation and artifact type, not on workflow steps.
+  - name: Rules
+    required: true
+    description: >
+      Define structural or content-level constraints that every instance
+      of this artifact must follow. Do not define persona tone, business
+      logic, or generation process here.
+  - name: Formatting Rules
+    required: true
+    description: >
+      Define concrete formatting expectations: headings, ordering, markup,
+      separators, code fences, field notation, or line structure.
+  - name: Template
+    required: false
+    description: >
+      An optional illustrative skeleton of the output. Only include this
+      when a formatting rule is genuinely hard to express in prose alone -
+      it should not just repeat the Rules section.
+  - name: Required Sections
+    required: false
+    description: >
+      A table listing which Markdown sections are required in instances
+      of this artifact, with notes.
+  - name: Compatibility
+    required: false
+    description: >
+      Known compatible skills or components for this output template.

@@ -1,0 +1,68 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://raw.githubusercontent.com/bwgabor/agent-prompt-framework/main/core/schemas/persona.yaml"
+title: Persona
+description: >
+  Front matter schema for a `persona` component (core/personas/**/*.md).
+  A persona defines the persistent identity of an agent - role, expertise
+  scope, voice, and behavioural principles. See core/conventions/persona.md.
+type: object
+properties:
+  name:
+    type: string
+    description: Unique identifier for this persona, used to reference it from a blueprint.yaml.
+  type:
+    const: persona
+    description: Component type discriminator. Must always be "persona".
+  version:
+    type: string
+    pattern: "^\\d+\\.\\d+$"
+    description: Semantic version of this persona file, as a quoted string (e.g. "1.0").
+  language:
+    type: string
+    description: "Language the persona's prompt content is written in (e.g. en, hu)."
+  status:
+    enum: [draft, stable, deprecated]
+    description: Lifecycle status of this component.
+  tags:
+    type: array
+    items:
+      type: string
+    description: Free-form labels for search/filtering. Use [] if none apply.
+required: [name, type, version, language, status]
+additionalProperties: false
+x-sections:
+  - name: Role
+    required: true
+    description: >
+      Define who this agent is - expertise, background, point of view.
+  - name: Scope
+    required: true
+    description: >
+      List the topics and task types this persona handles. Be specific,
+      including what is explicitly out of scope.
+  - name: Working Style
+    required: true
+    description: >
+      Describe tone, format preferences, and interaction style.
+  - name: Rules
+    required: true
+    description: >
+      Hard constraints - what the persona must always or never do.
+  - name: Goal
+    required: true
+    description: >
+      One sentence: what does this persona ultimately help the user achieve?
+  - name: Expertise
+    required: false
+    description: >
+      Specific knowledge areas, methods, or professional standards that
+      sharpen the persona's scope.
+  - name: Exclusions
+    required: false
+    description: >
+      Explicit responsibility boundaries, unsupported areas, or roles
+      the persona must not assume.
+  - name: Example Prompt
+    required: false
+    description: >
+      A short representative prompt showing the persona in use.

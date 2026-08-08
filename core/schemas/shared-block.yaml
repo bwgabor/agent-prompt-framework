@@ -1,0 +1,49 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://raw.githubusercontent.com/bwgabor/agent-prompt-framework/main/core/schemas/shared-block.yaml"
+title: Shared Block
+description: >
+  Front matter schema for a `shared-block` component (core/shared-blocks/**/*.md).
+  A shared block is a short, reusable instruction fragment that can be inserted
+  into any assembled prompt, regardless of persona or skill. See
+  core/conventions/shared-blocks.md.
+type: object
+properties:
+  name:
+    type: string
+    description: Unique identifier for this shared block, used to reference it from a blueprint.yaml.
+  type:
+    const: shared-block
+    description: Component type discriminator. Must always be "shared-block".
+  version:
+    type: string
+    pattern: "^\\d+\\.\\d+$"
+    description: Semantic version of this shared block file, as a quoted string (e.g. "1.0").
+  language:
+    type: string
+    description: "Language the shared block's prompt content is written in (e.g. en, hu)."
+  status:
+    enum: [draft, stable, deprecated]
+    description: Lifecycle status of this component.
+  tags:
+    type: array
+    items:
+      type: string
+    description: Free-form labels for search/filtering. Use [] if none apply.
+required: [name, type, version, language, status]
+additionalProperties: false
+x-sections:
+  - name: Purpose
+    required: true
+    description: >
+      Explain what this block does and when it should be included in an
+      assembled prompt.
+  - name: Usage
+    required: true
+    description: >
+      State where in the assembled prompt this block should be inserted
+      (e.g. relative to the persona block, skill block, and user request).
+  - name: Instructions
+    required: true
+    description: >
+      The actual reusable instruction fragment - the concrete behaviour
+      this block adds to the assembled prompt.

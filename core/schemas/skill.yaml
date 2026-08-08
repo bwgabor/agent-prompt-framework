@@ -1,0 +1,76 @@
+"$schema": "http://json-schema.org/draft-07/schema#"
+"$id": "https://raw.githubusercontent.com/bwgabor/agent-prompt-framework/main/core/schemas/skill.yaml"
+title: Skill
+description: >
+  Front matter schema for a `skill` component (core/skills/**/*.md).
+  A skill defines a repeatable process or capability - the "how", not the
+  "who" (persona) and not the presentation (output-template). See
+  core/conventions/skill.md.
+type: object
+properties:
+  name:
+    type: string
+    description: Unique identifier for this skill, used to reference it from a blueprint.yaml.
+  type:
+    const: skill
+    description: Component type discriminator. Must always be "skill".
+  version:
+    type: string
+    pattern: "^\\d+\\.\\d+$"
+    description: Semantic version of this skill file, as a quoted string (e.g. "1.0").
+  language:
+    type: string
+    description: "Language the skill's prompt content is written in (e.g. en, hu)."
+  status:
+    enum: [draft, stable, deprecated]
+    description: Lifecycle status of this component.
+  tags:
+    type: array
+    items:
+      type: string
+    description: Free-form labels for search/filtering. Use [] if none apply.
+required: [name, type, version, language, status]
+additionalProperties: false
+x-sections:
+  - name: Purpose
+    required: true
+    description: >
+      State in 1-2 sentences the reusable capability or repeatable process
+      this skill provides.
+  - name: When to Use
+    required: true
+    description: >
+      Describe the situations in which this skill is applicable.
+  - name: Inputs
+    required: true
+    description: >
+      List the information required to run this process. Be specific
+      about what each input is for.
+  - name: Process
+    required: true
+    description: >
+      Define the ordered steps or adaptable workflow. Each step should
+      be actionable.
+  - name: Expected Output
+    required: true
+    description: >
+      Describe the content-level result - what the user receives after
+      the skill is applied. Do not prescribe Markdown structure, layout,
+      or formatting here; that belongs in an output-template.
+  - name: Constraints
+    required: false
+    description: >
+      Process-specific limits, exclusions, and guardrails.
+  - name: Examples
+    required: false
+    description: >
+      Short, representative examples of using this skill in practice.
+  - name: References
+    required: false
+    description: >
+      Related files in this repository or external sources.
+  - name: Compatibility
+    required: false
+    description: >
+      Known combinations with personas, outputs, shared blocks, or
+      future components.
